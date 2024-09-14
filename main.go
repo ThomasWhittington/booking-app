@@ -71,4 +71,17 @@ func main() {
 			}
 		}
 	}
+
+	//swich statements pretty much the same as C#
+	city := "London"
+	switch city {
+	case "London":
+		break
+	case "New York":
+		break
+	case "Berlin", "Hong Kong": //different from C#, handled in 1 line in GO
+		break
+	default:
+		break
+	}
 }
