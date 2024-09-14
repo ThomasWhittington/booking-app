@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"sync"
+	"time"
 )
 
 const conferenceTickets uint = 50
@@ -17,6 +19,8 @@ type UserData = struct {
 	numberOfTickets uint
 }
 
+var wg = sync.WaitGroup{}
+
 func main() {
 
 	greetUsers()
@@ -28,6 +32,8 @@ func main() {
 
 		if isValidName && isValidEmail && isValidTicketNumber {
 			bookTicket(userData)
+			wg.Add(1)               //add to wait group the number of new threads that main needs to wait for before closing
+			go sendTicket(userData) // just add the 'go' keyword to run function in new thread!
 			firstNames := getFirstNames(bookings)
 			fmt.Printf("The first names of bookings are: %v\n", firstNames)
 
@@ -49,6 +55,7 @@ func main() {
 			}
 		}
 	}
+	wg.Wait() //wait at this point for all threads to finish
 }
 
 func greetUsers() {
@@ -96,4 +103,13 @@ func bookTicket(userData UserData) {
 
 	fmt.Printf("Thankyou %v %v for booking %v tickets. You will recieve a confirmation email at %v\n", userData.firstName, userData.lastName, userData.numberOfTickets, userData.email)
 	fmt.Printf("%v tickets remaining for %v\n", remainingTickets, conferenceName)
+}
+
+func sendTicket(userData UserData) {
+	time.Sleep(10 * time.Second)
+	var ticket = fmt.Sprintf("%v tickets for %v %v", userData.numberOfTickets, userData.firstName, userData.lastName)
+	fmt.Println("##########")
+	fmt.Printf("Sending ticket:\n %v \nto email address %v\n", ticket, userData.email)
+	fmt.Println("##########")
+	wg.Done() //mark thread as completed
 }
