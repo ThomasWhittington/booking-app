@@ -1,16 +1,15 @@
 package main
 
 import (
-	"booking-app/helper"
 	"fmt"
-	"strings"
+	"strconv"
 )
 
 const conferenceTickets uint = 50
 
 var conferenceName = "Go conference"
 var remainingTickets uint = conferenceTickets
-var bookings []string
+var bookings = make([]map[string]string, 0)
 
 func main() {
 
@@ -19,7 +18,7 @@ func main() {
 	//for { // infinite loop
 	for remainingTickets > 0 && len(bookings) < 50 { //equivalant of a while loop. Set a condition after 'for' keyword
 		firstName, lastName, email, userTickets := getUserInput()
-		isValidName, isValidEmail, isValidTicketNumber := helper.ValidateUserInput(firstName, lastName, email, userTickets, remainingTickets)
+		isValidName, isValidEmail, isValidTicketNumber := validateUserInput(firstName, lastName, email, userTickets, remainingTickets)
 
 		if isValidName && isValidEmail && isValidTicketNumber {
 			bookTicket(firstName, lastName, email, userTickets)
@@ -52,12 +51,11 @@ func greetUsers() {
 	fmt.Println("Get your tickets here to attend")
 }
 
-func getFirstNames(bookings []string) []string { // return type is put after the parameters
+func getFirstNames(bookings []map[string]string) []string { // return type is put after the parameters
 	firstNames := []string{}
 
 	for _, booking := range bookings { //typical foreach loop (for index, value:= range list). Use _ to mark as not used
-		var names = strings.Fields(booking)
-		firstNames = append(firstNames, names[0])
+		firstNames = append(firstNames, booking["firstName"])
 	}
 	return firstNames
 }
@@ -82,7 +80,14 @@ func getUserInput() (string, string, string, uint) {
 
 func bookTicket(firstName string, lastName string, email string, userTickets uint) {
 	remainingTickets -= userTickets
-	bookings = append(bookings, firstName+" "+lastName)
+
+	var userData = make(map[string]string)
+	userData["firstName"] = firstName
+	userData["lastName"] = lastName
+	userData["email"] = email
+	userData["numberOfTickets"] = strconv.FormatUint(uint64(userTickets), 10)
+
+	bookings = append(bookings, userData)
 
 	fmt.Printf("Thankyou %v %v for booking %v tickets. You will recieve a confirmation email at %v\n", firstName, lastName, userTickets, email)
 	fmt.Printf("%v tickets remaining for %v\n", remainingTickets, conferenceName)
