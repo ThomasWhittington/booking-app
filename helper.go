@@ -2,11 +2,11 @@ package main
 
 import "strings"
 
-func validateUserInput(firstName string, lastName string, email string, userTickets uint, remainingTickets uint) (bool, bool, bool) { // multiple returns! declare inside ()
+func validateUserInput(userData UserData, remainingTickets uint) (bool, bool, bool) { // multiple returns! declare inside ()
 
-	isValidName := len(firstName) >= 2 && len(lastName) >= 2
-	isValidEmail := strings.Contains(email, "@")
-	isValidTicketNumber := userTickets > 0 && userTickets <= remainingTickets
+	isValidName := len(userData.firstName) >= 2 && len(userData.lastName) >= 2
+	isValidEmail := strings.Contains(userData.email, "@")
+	isValidTicketNumber := userData.numberOfTickets > 0 && userData.numberOfTickets <= remainingTickets
 
 	return isValidName, isValidEmail, isValidTicketNumber
 }
